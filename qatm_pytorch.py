@@ -237,8 +237,8 @@ def nms_multi(scores, w_array, h_array, thresh_list):
     indices = np.arange(scores.shape[0])
     maxes = np.max(scores.reshape(scores.shape[0], -1), axis=1)
     # omit not-matching templates
-    scores_omit = scores[maxes > 0.1 * maxes.max()]
-    indices_omit = indices[maxes > 0.1 * maxes.max()]
+    scores_omit = scores[maxes > 0.5 * maxes.max()]
+    indices_omit = indices[maxes > 0.5 * maxes.max()]
     # extract candidate pixels from scores
     dots = None
     dos_indices = None
