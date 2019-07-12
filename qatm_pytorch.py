@@ -147,7 +147,7 @@ class CreateModel():
         for i in range(batchsize_T):
             T_feat_i = T_feat[i].unsqueeze(0)
             I_feat_norm, T_feat_i = MyNormLayer()(self.I_feat, T_feat_i)
-            dist = torch.einsum("xcab,xcde->xabde", I_feat_norm / torch.norm(I_feat_norm, dim=1, keepdim=True), T_feat_i / torch.norm(T_feat_i, dim=1, keepdim=True))
+            dist = torch.einsum("xcab,xcde->xabde", (I_feat_norm / torch.norm(I_feat_norm, dim=1, keepdim=True), T_feat_i / torch.norm(T_feat_i, dim=1, keepdim=True)))
             conf_map = QATM(self.alpha)(dist)
             if conf_maps is None:
                 conf_maps = conf_map
@@ -167,7 +167,7 @@ class QATM():
         xm_qry = x - torch.max(x, dim=2, keepdim=True)[0]
         confidence = torch.sqrt(F.softmax(self.alpha*xm_ref, dim=1) * F.softmax(self.alpha * xm_qry, dim=2))
         conf_values, ind3 = torch.topk(confidence, 1)
-        ind1, ind2 = torch.meshgrid(torch.arange(batch_size), torch.arange(ref_row*ref_col))
+        ind1, ind2 = torch.meshgrid([torch.arange(batch_size), torch.arange(ref_row*ref_col)])
         ind1 = ind1.flatten()
         ind2 = ind2.flatten()
         ind3 = ind3.flatten()
